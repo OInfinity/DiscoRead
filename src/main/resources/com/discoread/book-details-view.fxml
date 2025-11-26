@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<DialogPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.discoread.controller.BookDetailsController"
+            prefWidth="480">
+
+    <content>
+        <VBox spacing="12">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <!-- Title -->
+            <Label fx:id="titleLabel"
+                   style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+            <!-- Cover Image -->
+            <ImageView fx:id="coverImage"
+                       fitHeight="200"
+                       fitWidth="150"
+                       preserveRatio="true"/>
+
+            <!-- Book Metadata -->
+            <Label fx:id="authorLabel"/>
+            <Label fx:id="yearLabel"/>
+            <Label fx:id="genreLabel"/>
+            <Label fx:id="isbnLabel"/>
+            <Label fx:id="locationLabel"/>
+            <Label fx:id="filePathLabel"/>
+
+            <!-- Description -->
+            <Label text="Description:" style="-fx-font-weight: bold;"/>
+            <TextArea fx:id="descriptionArea"
+                      wrapText="true"
+                      editable="false"
+                      prefRowCount="5"/>
+
+            <!-- ✅ NEW: Open Book Button -->
+            <Button fx:id="openBookButton"
+                    text="📖 Open Book"
+                    maxWidth="Infinity"
+                    style="-fx-font-size: 14px;"/>
+
+        </VBox>
+    </content>
+
+    <buttonTypes>
+        <ButtonType text="Close" buttonData="CANCEL_CLOSE"/>
+    </buttonTypes>
+
+</DialogPane>

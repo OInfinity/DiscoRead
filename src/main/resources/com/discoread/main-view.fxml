@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.discoread.controller.MainController">
+
+    <top>
+        <HBox spacing="10" style="-fx-padding: 10;">
+            <TextField fx:id="searchField" promptText="Search books..." HBox.hgrow="ALWAYS"/>
+
+            <!-- ✅ NEW Genre Filter -->
+            <ComboBox fx:id="genreFilter" promptText="Filter by Genre"/>
+
+            <Button text="Add Book" fx:id="addButton"/>
+            <Button text="Delete Selected" fx:id="deleteButton"/>
+        </HBox>
+    </top>
+
+    <center>
+        <TableView fx:id="bookTable" prefWidth="800">
+            <columns>
+                <TableColumn fx:id="titleColumn" text="Title" prefWidth="200"/>
+                <TableColumn fx:id="authorColumn" text="Author" prefWidth="150"/>
+                <TableColumn fx:id="yearColumn" text="Year" prefWidth="80"/>
+                <TableColumn fx:id="genreColumn" text="Genre" prefWidth="120"/>
+                <TableColumn fx:id="isbnColumn" text="ISBN" prefWidth="150"/>
+            </columns>
+        </TableView>
+    </center>
+
+</BorderPane>

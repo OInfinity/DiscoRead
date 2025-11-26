@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<DialogPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.discoread.controller.EditBookController"
+            prefWidth="400">
+
+    <content>
+        <VBox spacing="10" padding="10">
+            <TextField fx:id="titleField" promptText="Title"/>
+            <TextField fx:id="authorField" promptText="Author"/>
+            <TextField fx:id="yearField" promptText="Year"/>
+            <TextField fx:id="genreField" promptText="Genre"/>
+            <TextField fx:id="isbnField" promptText="ISBN"/>
+            <CheckBox fx:id="availableCheck" text="Available"/>
+            <TextArea fx:id="descriptionField" promptText="Description" prefRowCount="3"/>
+            <TextField fx:id="coverUrlField" promptText="Cover Image URL"/>
+            <TextField fx:id="locationField" promptText="Location"/>
+        </VBox>
+    </content>
+
+    <buttonTypes>
+        <ButtonType text="Save Changes" buttonData="OK_DONE"/>
+        <ButtonType text="Cancel" buttonData="CANCEL_CLOSE"/>
+    </buttonTypes>
+</DialogPane>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<DialogPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.discoread.controller.AddBookController"
+            prefWidth="450">
+
+    <content>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="12" right="12" bottom="12" left="12"/>
+            </padding>
+
+            <TextField fx:id="titleField" promptText="Title"/>
+
+            <TextField fx:id="authorField" promptText="Author"/>
+
+            <TextField fx:id="yearField" promptText="Year (e.g., 2021)"/>
+
+            <TextField fx:id="genreField" promptText="Genre"/>
+
+            <!-- ✅ ISBN with lookup -->
+            <HBox spacing="10">
+                <TextField fx:id="isbnField"
+                           promptText="ISBN"
+                           HBox.hgrow="ALWAYS"/>
+                <Button text="Lookup" fx:id="lookupButton"/>
+            </HBox>
+
+            <CheckBox fx:id="availableCheck" text="Available"/>
+
+            <TextArea fx:id="descriptionField"
+                      promptText="Description"
+                      wrapText="true"
+                      prefRowCount="3"/>
+
+            <TextField fx:id="coverUrlField" promptText="Cover Image URL"/>
+
+            <!-- ✅ File picker -->
+            <HBox spacing="10">
+                <TextField fx:id="filePathField"
+                           promptText="Book file (PDF/EPUB)"
+                           HBox.hgrow="ALWAYS"/>
+                <Button fx:id="browseFileButton" text="Browse"/>
+            </HBox>
+
+            <TextField fx:id="locationField" promptText="Location (Shelf/Room)"/>
+
+        </VBox>
+    </content>
+
+    <buttonTypes>
+        <ButtonType text="Save" buttonData="OK_DONE"/>
+        <ButtonType text="Cancel" buttonData="CANCEL_CLOSE"/>
+    </buttonTypes>
+
+</DialogPane>
