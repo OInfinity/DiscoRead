@@ -135,10 +135,12 @@ git clone https://github.com/OInfinity/DiscoRead.git
 cd DiscoRead
 mvn clean install
 mvn javafx:run
+```
 
 Aternative
 
 sync/reload all Maven projects
-<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/b6cacd93-dabd-4e4c-bc6e-44cda3ac7e4b" />
+<img width="257" height="686" alt="Screenshot (2863)" src="https://github.com/user-attachments/assets/adf54927-1766-422a-9753-c61c2b3aa429" />
+
 
 
