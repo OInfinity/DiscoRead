@@ -1,3 +1,4 @@
+
 # DiscoRead – Digital Library System
 
 DiscoRead is a JavaFX + SQLite digital library that allows users to discover, organize and store books locally while also importing online book data via the Google Books API.  
