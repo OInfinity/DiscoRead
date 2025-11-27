@@ -1,9 +1,7 @@
-iuweiwuew# DiscoRead – Digital Library System
+# DiscoRead – Digital Library System
 
 DiscoRead is a JavaFX + SQLite digital library that allows users to discover, organize and store books locally while also importing online book data via the Google Books API.  
 The system includes User Authentication so access is controlled through Login and Sign-Up.
-
----
 
 ## 1. Features Overview
 
@@ -13,6 +11,16 @@ The system includes User Authentication so access is controlled through Login an
 - Password stored securely in SQLite
 - Each user maintains their own session
 - Prevents unauthorized access to the library
+
+### Sign Up
+
+<img width="890" height="721" alt="sign up" src="https://github.com/user-attachments/assets/34b4da2e-8329-4cb4-9d5a-a6f6df7b9de0" />
+
+### Login
+
+<img width="897" height="629" alt="sign in" src="https://github.com/user-attachments/assets/2a630782-598e-4a46-8b81-195eddff9252" />
+
+
 
 ### 📚 Library Management
 - Load book database on startup
@@ -45,8 +53,6 @@ The system includes User Authentication so access is controlled through Login an
 - Open externally in system viewer or browser
 - File path stored in database
 
----
-
 ## 2. System Architecture
 
 ### Book Model
@@ -74,7 +80,6 @@ The system includes User Authentication so access is controlled through Login an
 | password | String | Stored user password |
 | created_date | String | Registration date |
 
----
 
 ## 3. User Story
 
@@ -84,8 +89,6 @@ The system includes User Authentication so access is controlled through Login an
 4. User imports a new book using Google Books — metadata auto-fills.
 5. User attaches a PDF, opens it to read externally.
 6. Logs out — returns later, database is preserved exactly as before.
-
----
 
 ## 4. Tech Stack
 
@@ -98,8 +101,6 @@ The system includes User Authentication so access is controlled through Login an
 | Persistence | Local DB with auto-migrations |
 | Testing | JUnit 5 |
 | Version Control | Git + GitHub |
-
----
 
 ## 5. Run the System
 
