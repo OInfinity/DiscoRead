@@ -136,3 +136,9 @@ cd DiscoRead
 mvn clean install
 mvn javafx:run
 
+Aternative
+
+sync/reload all Maven projects
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/b6cacd93-dabd-4e4c-bc6e-44cda3ac7e4b" />
+
+
