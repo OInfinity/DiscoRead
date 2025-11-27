@@ -131,7 +131,7 @@ The system includes User Authentication so access is controlled through Login an
 ## 5. Run the System
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/DiscoRead.git
+git clone https://github.com/OInfinity/DiscoRead.git
 cd DiscoRead
 mvn clean install
 mvn javafx:run
