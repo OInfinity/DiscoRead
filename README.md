@@ -137,10 +137,17 @@ mvn clean install
 mvn javafx:run
 ```
 
-Aternative
+```sync/reload all Maven projects```
 
-sync/reload all Maven projects
 <img width="257" height="686" alt="Screenshot (2863)" src="https://github.com/user-attachments/assets/adf54927-1766-422a-9753-c61c2b3aa429" />
+
+```mvn javafx:run```
+
+<img width="258" height="187" alt="Screenshot (2865)" src="https://github.com/user-attachments/assets/d9435583-64b8-4d53-8a49-45f41d9b7858" />
+
+
+
+
 
 
 
