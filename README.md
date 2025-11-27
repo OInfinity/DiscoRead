@@ -21,6 +21,31 @@ The system includes User Authentication so access is controlled through Login an
 
 <img width="897" height="629" alt="sign in" src="https://github.com/user-attachments/assets/2a630782-598e-4a46-8b81-195eddff9252" />
 
+### Add a Book Manually
+<img width="486" height="505" alt="image" src="https://github.com/user-attachments/assets/dba57ac7-0a9b-431b-aaf6-226e58e9452e" />
+
+<img width="1008" height="545" alt="image" src="https://github.com/user-attachments/assets/71e518bb-5798-4388-a8bb-8bd498c2c896" />
+
+<img width="1017" height="550" alt="image" src="https://github.com/user-attachments/assets/5deee221-cb6d-484c-9950-87ad4833f4f5" />
+
+
+<img width="505" height="500" alt="image" src="https://github.com/user-attachments/assets/79b92ac4-3ceb-48ea-a8a9-ca3f0236ca07" />
+
+<img width="509" height="508" alt="image" src="https://github.com/user-attachments/assets/6f5df70a-339c-46f6-b97c-0728e680aee5" />
+
+<img width="524" height="450" alt="image" src="https://github.com/user-attachments/assets/13ac1429-d480-4347-bf7f-1a07e22c14af" />
+
+<img width="820" height="414" alt="image" src="https://github.com/user-attachments/assets/06b6539d-e388-4a6e-9bd2-7c98fbf59b7b" />
+
+### Edit a Book Entry
+<img width="736" height="516" alt="image" src="https://github.com/user-attachments/assets/5a9240e0-698d-4d66-a826-085df12341c3" />
+
+### Delete Book (ID-based safe delete)
+<img width="814" height="561" alt="image" src="https://github.com/user-attachments/assets/50504a47-fec3-4884-9038-a764a317a07c" />
+
+### PDF Upload & Open
+<img width="872" height="580" alt="image" src="https://github.com/user-attachments/assets/b4e2741c-77b0-4a74-98cd-def2adc81677" />
+
 
 
 ### 📚 Library Management
