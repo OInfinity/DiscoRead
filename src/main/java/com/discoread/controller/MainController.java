@@ -1,178 +1,146 @@
 package com.discoread.controller;
 
+import com.discoread.Main;
 import com.discoread.dao.BookDAO;
 import com.discoread.model.Book;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.util.List;
 
 public class MainController {
 
     @FXML private TableView<Book> bookTable;
-    @FXML private TableColumn<Book, String> titleColumn;
-    @FXML private TableColumn<Book, String> authorColumn;
-    @FXML private TableColumn<Book, Integer> yearColumn;
-    @FXML private TableColumn<Book, String> genreColumn;
-    @FXML private TableColumn<Book, String> isbnColumn;
+    @FXML private TableColumn<Book, String> colTitle;
+    @FXML private TableColumn<Book, String> colAuthor;
+    @FXML private TableColumn<Book, Integer> colYear;
+    @FXML private TableColumn<Book, String> colGenre;
+    @FXML private TableColumn<Book, String> colISBN;
+    @FXML private TableColumn<Book, Boolean> colAvailable;
+
     @FXML private TextField searchField;
-    @FXML private ComboBox<String> genreFilter;
-    @FXML private Button addButton;
-    @FXML private Button deleteButton;
+    @FXML private Label statusLabel;
 
     private final BookDAO bookDAO = new BookDAO();
-    private final ObservableList<Book> books = FXCollections.observableArrayList();
+    private ObservableList<Book> bookList;
 
     @FXML
     public void initialize() {
+        colTitle.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getTitle()));
+        colAuthor.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getAuthor()));
+        colYear.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue().getYear()));
+        colGenre.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getGenre()));
+        colISBN.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getIsbn()));
+        colAvailable.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue().isAvailable()));
 
-        // Table column setup
-        titleColumn.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleStringProperty(data.getValue().getTitle()));
-
-        authorColumn.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleStringProperty(data.getValue().getAuthor()));
-
-        yearColumn.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleObjectProperty<>(data.getValue().getYear()));
-
-        genreColumn.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleStringProperty(data.getValue().getGenre()));
-
-        isbnColumn.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleStringProperty(data.getValue().getIsbn()));
-
-        // Load data into table
-        refreshTable();
-
-        // Search listener
-        searchField.textProperty().addListener((obs, oldValue, newValue) -> applyFilters());
-
-        // Genre filter listener
-        genreFilter.valueProperty().addListener((obs, oldVal, newVal) -> applyFilters());
-
-        // Button listeners
-        deleteButton.setOnAction(event -> deleteSelectedBook());
-        addButton.setOnAction(event -> openAddBookDialog());
-
-        // ✅ Double click -> open details window
-        bookTable.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                openBookDetailsDialog();
-            }
-        });
+        loadBooks();
     }
 
-    private void refreshTable() {
-        books.clear();
-        books.addAll(bookDAO.getAllBooks());
-        bookTable.setItems(books);
-        updateGenreFilter();
+    private void loadBooks() {
+        List<Book> books = bookDAO.getAllBooks();
+        bookList = FXCollections.observableArrayList(books);
+        bookTable.setItems(bookList);
+
+        System.out.println("📚 Books Loaded: " + bookList.size());
+        bookList.forEach(b -> System.out.println("→ " + b.getTitle()));
     }
 
-    private void applyFilters() {
-        String search = searchField.getText() == null ? "" : searchField.getText().toLowerCase();
-        String selectedGenre = genreFilter.getValue();
+    @FXML
+    private void onSearch() {
+        String keyword = searchField.getText().toLowerCase();
 
-        ObservableList<Book> filtered = books.filtered(book -> {
-            boolean matchesSearch =
-                    book.getTitle().toLowerCase().contains(search) ||
-                            book.getAuthor().toLowerCase().contains(search) ||
-                            (book.getGenre() != null && book.getGenre().toLowerCase().contains(search)) ||
-                            book.getIsbn().toLowerCase().contains(search);
-
-            boolean matchesGenre =
-                    selectedGenre == null || selectedGenre.equals("All") ||
-                            (book.getGenre() != null && book.getGenre().equalsIgnoreCase(selectedGenre));
-
-            return matchesSearch && matchesGenre;
-        });
+        ObservableList<Book> filtered = bookList.filtered(book ->
+                book.getTitle().toLowerCase().contains(keyword) ||
+                        book.getAuthor().toLowerCase().contains(keyword) ||
+                        book.getIsbn().toLowerCase().contains(keyword)
+        );
 
         bookTable.setItems(filtered);
     }
 
-    private void updateGenreFilter() {
-        genreFilter.getItems().clear();
-        genreFilter.getItems().add("All");
-
-        books.stream()
-                .map(Book::getGenre)
-                .filter(g -> g != null && !g.isBlank())
-                .distinct()
-                .sorted()
-                .forEach(genreFilter.getItems()::add);
-
-        if (genreFilter.getValue() == null)
-            genreFilter.setValue("All");
+    @FXML
+    private void onAddBook() throws IOException {
+        switchScene("add-book-view.fxml");
     }
 
-    private void deleteSelectedBook() {
+    @FXML
+    private void onViewBook() throws IOException {
         Book selected = bookTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showAlert("No Selection", "Please select a book to delete.");
+            statusLabel.setText("⚠ Select a book first.");
             return;
         }
 
-        bookDAO.deleteBook(selected.getId());
-        refreshTable();
+        BookDetailsController.setBook(selected);
+        switchScene("book-details-view.fxml");
     }
 
-    private void openAddBookDialog() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/discoread/add-book-view.fxml"));
-            DialogPane pane = loader.load();
-
-            AddBookController controller = loader.getController();
-
-            Dialog<ButtonType> dialog = new Dialog<>();
-            dialog.setDialogPane(pane);
-            dialog.setTitle("Add a New Book");
-
-            dialog.showAndWait().ifPresent(result -> {
-                if (result.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
-                    Book newBook = controller.saveBook();
-                    if (newBook != null) refreshTable();
-                }
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Error", "Unable to open Add Book form.");
-        }
-    }
-
-    // ✅ NEW — Book Preview Window
-    private void openBookDetailsDialog() {
+    @FXML
+    private void onEditBook() throws IOException {
         Book selected = bookTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/discoread/book-details-view.fxml")
-            );
-            DialogPane pane = loader.load();
-
-            BookDetailsController controller = loader.getController();
-            controller.setBook(selected);
-
-            Dialog<ButtonType> dialog = new Dialog<>();
-            dialog.setDialogPane(pane);
-            dialog.setTitle("Book Details");
-
-            dialog.showAndWait();
-
-        } catch (Exception e) {
-            e.printStackTrace();  // ✅ ensure full stacktrace shows
-            throw new RuntimeException(e); // ✅ force Maven to show it
+        if (selected == null) {
+            statusLabel.setText("⚠ Select a book to edit.");
+            return;
         }
+
+        EditBookController.setBook(selected);
+        switchScene("edit-book-view.fxml");
     }
 
+    // 🔥 FIXED — DELETE NOW USES ID, NOT ISBN
+    @FXML
+    private void onDeleteBook() {
+        Book selected = bookTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            statusLabel.setText("⚠ Select a book to delete.");
+            return;
+        }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText(title);
-        alert.setContentText(message);
-        alert.showAndWait();
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Delete Book");
+        confirm.setHeaderText("Are you sure you want to delete?");
+        confirm.setContentText("Book: " + selected.getTitle());
+
+        confirm.showAndWait().ifPresent(result -> {
+            if (result == ButtonType.OK) {
+
+                boolean removed = bookDAO.deleteBook(selected.getId()); // 🔥 SAFE DELETE BY ID
+
+                if (removed) {
+                    statusLabel.setStyle("-fx-text-fill: green;");
+                    statusLabel.setText("✔ Book deleted successfully.");
+                    loadBooks(); // refresh table list
+                } else {
+                    statusLabel.setStyle("-fx-text-fill: red;");
+                    statusLabel.setText("❌ Delete failed.");
+                }
+            }
+        });
+    }
+
+    private void switchScene(String fxml) throws IOException {
+        var file = Main.class.getResource("/com/discoread/" + fxml);
+
+        if (file == null) {
+            statusLabel.setText("❌ FXML not found: " + fxml);
+            System.err.println("Missing: " + fxml);
+            return;
+        }
+
+        FXMLLoader loader = new FXMLLoader(file);
+        Scene scene = new Scene(loader.load());
+
+        var css = Main.class.getResource("/com/discoread/styles.css");
+        if (css != null) scene.getStylesheets().add(css.toExternalForm());
+
+        Stage stage = (Stage) bookTable.getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
     }
 }

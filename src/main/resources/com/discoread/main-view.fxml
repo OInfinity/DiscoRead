@@ -2,33 +2,53 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.discoread.controller.MainController">
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.discoread.controller.MainController"
+            prefWidth="1000" prefHeight="650">
 
+    <!-- ==================== TOP BAR ==================== -->
     <top>
-        <HBox spacing="10" style="-fx-padding: 10;">
-            <TextField fx:id="searchField" promptText="Search books..." HBox.hgrow="ALWAYS"/>
-
-            <!-- ✅ NEW Genre Filter -->
-            <ComboBox fx:id="genreFilter" promptText="Filter by Genre"/>
-
-            <Button text="Add Book" fx:id="addButton"/>
-            <Button text="Delete Selected" fx:id="deleteButton"/>
-        </HBox>
+        <AnchorPane styleClass="header-bar" prefHeight="70">
+            <Label text="DiscoRead Library" layoutX="25" layoutY="20"
+                   style="-fx-font-size: 22px; -fx-text-fill: white;"/>
+        </AnchorPane>
     </top>
 
+    <!-- ==================== CENTER TABLE ==================== -->
     <center>
-        <TableView fx:id="bookTable" prefWidth="800">
-            <columns>
-                <TableColumn fx:id="titleColumn" text="Title" prefWidth="200"/>
-                <TableColumn fx:id="authorColumn" text="Author" prefWidth="150"/>
-                <TableColumn fx:id="yearColumn" text="Year" prefWidth="80"/>
-                <TableColumn fx:id="genreColumn" text="Genre" prefWidth="120"/>
-                <TableColumn fx:id="isbnColumn" text="ISBN" prefWidth="150"/>
-            </columns>
-        </TableView>
+        <VBox spacing="12" alignment="TOP_CENTER">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <HBox spacing="10" alignment="CENTER">
+                <TextField fx:id="searchField" promptText="Search by Title / Author / ISBN..."
+                           prefWidth="400" styleClass="search-bar"/>
+                <Button text="Search" onAction="#onSearch"/>
+            </HBox>
+
+            <TableView fx:id="bookTable" prefWidth="900" prefHeight="500">
+                <columns>
+                    <TableColumn text="Title" fx:id="colTitle" prefWidth="200"/>
+                    <TableColumn text="Author" fx:id="colAuthor" prefWidth="150"/>
+                    <TableColumn text="Year" fx:id="colYear" prefWidth="80"/>
+                    <TableColumn text="Genre" fx:id="colGenre" prefWidth="120"/>
+                    <TableColumn text="ISBN" fx:id="colISBN" prefWidth="150"/>
+                    <TableColumn text="Available" fx:id="colAvailable" prefWidth="100"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Add Book" onAction="#onAddBook"/>
+                <Button text="View Details" onAction="#onViewBook"/>
+                <Button text="Edit Book" onAction="#onEditBook"/>
+                <Button text="Delete Book" onAction="#onDeleteBook" styleClass="button-danger"/>
+            </HBox>
+
+            <Label fx:id="statusLabel" style="-fx-text-fill:red;"/>
+        </VBox>
     </center>
 
 </BorderPane>

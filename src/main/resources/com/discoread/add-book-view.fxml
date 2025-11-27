@@ -4,58 +4,61 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<DialogPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.discoread.controller.AddBookController"
-            prefWidth="450">
+            prefWidth="900" prefHeight="600">
 
-    <content>
-        <VBox spacing="10">
-            <padding>
-                <Insets top="12" right="12" bottom="12" left="12"/>
-            </padding>
+    <!-- ========= HEADER BAR ========= -->
+    <top>
+        <AnchorPane styleClass="header-bar" prefHeight="70">
+            <Label text="Add New Book" layoutX="25" layoutY="20"
+                   style="-fx-text-fill:white; -fx-font-size:22px;"/>
+        </AnchorPane>
+    </top>
 
-            <TextField fx:id="titleField" promptText="Title"/>
 
-            <TextField fx:id="authorField" promptText="Author"/>
+    <!-- ========= INPUT FORM ========= -->
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="14">
+            <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
 
-            <TextField fx:id="yearField" promptText="Year (e.g., 2021)"/>
+            <TextField fx:id="titleField" promptText="Book Title" prefWidth="380"/>
+            <TextField fx:id="authorField" promptText="Author Name" prefWidth="380"/>
+            <TextField fx:id="yearField" promptText="Publication Year" prefWidth="380"/>
+            <TextField fx:id="genreField" promptText="Genre / Category" prefWidth="380"/>
+            <TextField fx:id="isbnField" promptText="ISBN" prefWidth="380"/>
+            <TextField fx:id="locationField" promptText="Library Location (Shelf/Rack)" prefWidth="380"/>
 
-            <TextField fx:id="genreField" promptText="Genre"/>
+            <TextArea fx:id="descriptionField" promptText="Short Description"
+                      prefWidth="380" prefHeight="110" wrapText="true"/>
 
-            <!-- ✅ ISBN with lookup -->
-            <HBox spacing="10">
-                <TextField fx:id="isbnField"
-                           promptText="ISBN"
-                           HBox.hgrow="ALWAYS"/>
-                <Button text="Lookup" fx:id="lookupButton"/>
+            <TextField fx:id="coverURLField" promptText="Cover Image URL" prefWidth="380"/>
+
+            <!-- ⭐ GOOGLE BOOKS link -->
+            <TextField fx:id="googleLinkField" promptText="Google Books URL (Optional)" prefWidth="380"/>
+
+            <!-- ⭐ PDF IMPORT FIELD -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="pdfField" promptText="No PDF selected" prefWidth="260"/>
+                <Button text="Choose PDF" onAction="#onChoosePDF"
+                        style="-fx-background-color:#1976D2; -fx-text-fill:white;"/>
             </HBox>
 
-            <CheckBox fx:id="availableCheck" text="Available"/>
+            <!-- ⭐ Search online button -->
+            <Button text="Search Google Books Online"
+                    onAction="#openGoogleSearch"
+                    prefWidth="380"
+                    style="-fx-font-size:14px; -fx-background-color:#1976D2; -fx-text-fill:white;"/>
 
-            <TextArea fx:id="descriptionField"
-                      promptText="Description"
-                      wrapText="true"
-                      prefRowCount="3"/>
-
-            <TextField fx:id="coverUrlField" promptText="Cover Image URL"/>
-
-            <!-- ✅ File picker -->
-            <HBox spacing="10">
-                <TextField fx:id="filePathField"
-                           promptText="Book file (PDF/EPUB)"
-                           HBox.hgrow="ALWAYS"/>
-                <Button fx:id="browseFileButton" text="Browse"/>
+            <!-- BUTTONS -->
+            <HBox spacing="12">
+                <Button text="Save Book" onAction="#onSaveBook" prefWidth="180"/>
+                <Button text="Cancel" onAction="#onCancel" prefWidth="180"
+                        style="-fx-background-color:#B0BEC5; -fx-text-fill:black;"/>
             </HBox>
 
-            <TextField fx:id="locationField" promptText="Location (Shelf/Room)"/>
-
+            <Label fx:id="statusLabel" style="-fx-text-fill:red; -fx-font-size:14px;"/>
         </VBox>
-    </content>
+    </center>
 
-    <buttonTypes>
-        <ButtonType text="Save" buttonData="OK_DONE"/>
-        <ButtonType text="Cancel" buttonData="CANCEL_CLOSE"/>
-    </buttonTypes>
-
-</DialogPane>
+</BorderPane>

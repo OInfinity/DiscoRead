@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.discoread.controller.RegisterController"
+            prefWidth="900" prefHeight="600">
+
+    <AnchorPane styleClass="header-bar" prefHeight="70" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <Label text="Create Account - DiscoRead" layoutX="25" layoutY="20"
+               style="-fx-text-fill: white; -fx-font-size: 20px;"/>
+    </AnchorPane>
+
+    <VBox alignment="CENTER" spacing="12"
+          prefWidth="400" prefHeight="450"
+          layoutX="250" layoutY="120"
+          style="-fx-background-color: white; -fx-background-radius: 12;">
+
+        <Label text="Register" style="-fx-font-size: 30px; -fx-font-weight: bold;"/>
+
+        <TextField fx:id="usernameField" promptText="Username" prefWidth="250"/>
+        <PasswordField fx:id="passwordField" promptText="Password" prefWidth="250"/>
+        <PasswordField fx:id="confirmPasswordField" promptText="Confirm Password" prefWidth="250"/>
+
+        <Button text="Create Account" onAction="#onRegisterClick" prefWidth="250"/>
+        <Hyperlink text="Already Registered? Login" onAction="#onLoginClick"/>
+
+        <Label fx:id="statusLabel" style="-fx-text-fill: red;"/>
+    </VBox>
+
+</AnchorPane>

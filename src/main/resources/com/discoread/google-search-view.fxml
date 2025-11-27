@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.discoread.controller.GoogleSearchController"
+            prefWidth="650" prefHeight="550">
+
+    <!-- ================= TOP SEARCH BAR ================= -->
+    <top>
+        <HBox spacing="10">
+            <padding><Insets top="15" left="15" right="15" bottom="15"/></padding>
+            <TextField fx:id="searchField" promptText="Search book title..." prefWidth="400"/>
+            <Button text="Search" onAction="#onSearch" prefWidth="120"/>
+        </HBox>
+    </top>
+
+    <!-- ================= RESULT LIST ================= -->
+    <center>
+        <ListView fx:id="resultsList" prefHeight="450" style="-fx-font-size:14px;">
+            <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+        </ListView>
+    </center>
+
+    <!-- ================= IMPORT BUTTON ================= -->
+    <bottom>
+        <HBox alignment="CENTER">
+            <padding><Insets top="10" bottom="10"/></padding>
+            <Button text="Import Selected Book"
+                    onAction="#onImport"
+                    prefWidth="250"
+                    style="-fx-font-size:15px; -fx-background-color:#2196F3; -fx-text-fill:white;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

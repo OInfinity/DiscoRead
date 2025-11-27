@@ -4,27 +4,45 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<DialogPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.discoread.controller.EditBookController"
-            prefWidth="400">
+            prefWidth="900" prefHeight="600">
 
-    <content>
-        <VBox spacing="10" padding="10">
-            <TextField fx:id="titleField" promptText="Title"/>
-            <TextField fx:id="authorField" promptText="Author"/>
-            <TextField fx:id="yearField" promptText="Year"/>
-            <TextField fx:id="genreField" promptText="Genre"/>
-            <TextField fx:id="isbnField" promptText="ISBN"/>
-            <CheckBox fx:id="availableCheck" text="Available"/>
-            <TextArea fx:id="descriptionField" promptText="Description" prefRowCount="3"/>
-            <TextField fx:id="coverUrlField" promptText="Cover Image URL"/>
-            <TextField fx:id="locationField" promptText="Location"/>
+    <!-- HEADER -->
+    <top>
+        <AnchorPane styleClass="header-bar" prefHeight="70">
+            <Label text="Edit Book Details" layoutX="25" layoutY="20"
+                   style="-fx-text-fill:white; -fx-font-size:22px;"/>
+        </AnchorPane>
+    </top>
+
+    <!-- ======================= FORM ======================= -->
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="12">
+            <padding>
+                <Insets top="30" right="30" bottom="30" left="30"/>
+            </padding>
+
+            <TextField fx:id="titleField"     promptText="Book Title"        prefWidth="350"/>
+            <TextField fx:id="authorField"    promptText="Author"            prefWidth="350"/>
+            <TextField fx:id="yearField"      promptText="Year"              prefWidth="350"/>
+            <TextField fx:id="genreField"     promptText="Genre"             prefWidth="350"/>
+            <TextField fx:id="isbnField"      promptText="ISBN"              prefWidth="350" editable="false"/>
+            <TextField fx:id="locationField"  promptText="Location"          prefWidth="350"/>
+
+            <TextArea fx:id="descriptionField" promptText="Description"
+                      prefWidth="350" prefHeight="100"/>
+
+            <TextField fx:id="coverURLField" promptText="Cover Image URL" prefWidth="350"/>
+
+            <HBox spacing="15" alignment="CENTER">
+                <Button text="Save Changes" onAction="#onSaveEdit" prefWidth="180"/>
+                <Button text="Cancel"       onAction="#onCancel"   prefWidth="180"
+                        style="-fx-background-color:#B0BEC5; -fx-text-fill:black;"/>
+            </HBox>
+
+            <Label fx:id="statusLabel" style="-fx-text-fill:red;"/>
         </VBox>
-    </content>
+    </center>
 
-    <buttonTypes>
-        <ButtonType text="Save Changes" buttonData="OK_DONE"/>
-        <ButtonType text="Cancel" buttonData="CANCEL_CLOSE"/>
-    </buttonTypes>
-</DialogPane>
+</BorderPane>

@@ -1,90 +1,127 @@
 package com.discoread.controller;
 
+import com.discoread.Main;
 import com.discoread.model.Book;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 
-import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
+import java.awt.Desktop;
+import java.net.URI;
 
 public class BookDetailsController {
 
+    /** Receives selected book from MainController */
+    private static Book selectedBook;
+
+    @FXML private ImageView coverImage;
     @FXML private Label titleLabel;
     @FXML private Label authorLabel;
+    @FXML private Label isbnLabel;
     @FXML private Label yearLabel;
     @FXML private Label genreLabel;
-    @FXML private Label isbnLabel;
     @FXML private Label locationLabel;
-    @FXML private Label filePathLabel; // ✅ NEW — shows file path
     @FXML private TextArea descriptionArea;
-    @FXML private ImageView coverImage;
-    @FXML private Button openBookButton; // ✅ NEW — open book file button
+    @FXML private Label googleLinkLabel;
 
-    private Book currentBook; // ✅ store reference for access
+    // ⭐ NEW — Button for PDF open feature
+    @FXML private Button openPdfButton;
 
-    public void setBook(Book book) {
 
-        this.currentBook = book;
+    /* ===========================
+          Setter from MainPage
+    =========================== */
+    public static void setBook(Book book) { selectedBook = book; }
 
-        titleLabel.setText(book.getTitle());
-        authorLabel.setText("Author: " + book.getAuthor());
-        yearLabel.setText("Year: " + book.getYear());
-        genreLabel.setText("Genre: " + book.getGenre());
-        isbnLabel.setText("ISBN: " + book.getIsbn());
-        locationLabel.setText("Location: " + book.getLocation());
 
-        descriptionArea.setText(book.getDescription());
+    @FXML
+    public void initialize() {
+        if (selectedBook == null) return;
 
-        // ✅ Display file path
-        if (book.getFilePath() != null && !book.getFilePath().isBlank()) {
-            filePathLabel.setText("File: " + book.getFilePath());
-        } else {
-            filePathLabel.setText("File: Not available");
-        }
+        titleLabel.setText(selectedBook.getTitle());
+        authorLabel.setText("Author: " + selectedBook.getAuthor());
+        isbnLabel.setText("ISBN: " + selectedBook.getIsbn());
+        yearLabel.setText("Year: " + selectedBook.getYear());
+        genreLabel.setText("Genre: " + selectedBook.getGenre());
+        locationLabel.setText("Location: " + selectedBook.getLocation());
+        descriptionArea.setText(selectedBook.getDescription());
 
-        // ✅ Load cover image safely
-        if (book.getCoverImageURL() != null && !book.getCoverImageURL().isBlank()) {
-            try {
-                coverImage.setImage(new Image(book.getCoverImageURL(), true));
-            } catch (Exception e) {
-                coverImage.setImage(null);
-            }
-        }
-
-        // ✅ Disable Open button if no file path
-        boolean hasFile = book.getFilePath() != null && !book.getFilePath().isBlank();
-        openBookButton.setDisable(!hasFile);
-
-        // ✅ Handle button click
-        openBookButton.setOnAction(event -> openBookFile());
-    }
-
-    // ✅ Opens PDF/EPUB in system default viewer
-    private void openBookFile() {
+        /* ================= COVER IMAGE ================= */
         try {
-            File file = new File(currentBook.getFilePath());
+            if (selectedBook.getCoverImageURL() != null && !selectedBook.getCoverImageURL().isBlank())
+                coverImage.setImage(new Image(selectedBook.getCoverImageURL(), true));
+        } catch (Exception ignored) {}
 
-            if (!file.exists()) {
-                showAlert("File Not Found",
-                        "The attached file could not be located:\n" + currentBook.getFilePath());
-                return;
-            }
 
-            Desktop.getDesktop().open(file);
+        /* ================= GOOGLE LINK ================= */
+        if (selectedBook.getGoogleBooksLink() != null && !selectedBook.getGoogleBooksLink().isBlank()) {
+            googleLinkLabel.setText("🔗 View on Google Books");
+            googleLinkLabel.setStyle("-fx-text-fill: #1976D2; -fx-underline: true; -fx-font-size: 14px;");
+            googleLinkLabel.setOnMouseClicked(e -> openGoogleLink());
+        } else {
+            googleLinkLabel.setText("");
+        }
 
-        } catch (Exception e) {
-            showAlert("Unable to Open File",
-                    "An error occurred while opening the book file.");
-            e.printStackTrace();
+
+        /* ================= PDF OPEN BUTTON (NEW) ================= */
+        if (selectedBook.getPdfPath() != null && !selectedBook.getPdfPath().isBlank()) {
+
+            openPdfButton.setVisible(true);
+            openPdfButton.setOnAction(e -> openPDF());
+
+        } else {
+            openPdfButton.setVisible(false);   // No PDF → hide button
         }
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setHeaderText(title);
-        alert.setContentText(message);
-        alert.showAndWait();
+
+    /* ===================== OPEN PDF EXTERNAL ====================== */
+    private void openPDF() {
+        try {
+            String pdf = selectedBook.getPdfPath();
+
+            if (pdf.startsWith("file:/") || pdf.startsWith("file:/")) {
+                Desktop.getDesktop().browse(new URI(pdf));  // open local PDF
+            } else {
+                Desktop.getDesktop().browse(new URI("file:///" + pdf)); // fallback
+            }
+        }
+        catch (Exception ex) {
+            System.out.println("❌ Failed to open PDF: " + ex.getMessage());
+        }
+    }
+
+
+    /* ===================== OPEN GOOGLE BOOKS ===================== */
+    private void openGoogleLink() {
+        try { Desktop.getDesktop().browse(new URI(selectedBook.getGoogleBooksLink())); }
+        catch (Exception ignored) {}
+    }
+
+
+    /* ========== GO TO EDIT ========== */
+    @FXML private void onEditBook() throws IOException {
+        EditBookController.setBook(selectedBook);
+        switchScene("edit-book-view.fxml");
+    }
+
+    /* ========== CLOSE ========== */
+    @FXML private void onClose() throws IOException { switchScene("main-view.fxml"); }
+
+    private void switchScene(String file) throws IOException {
+        Stage stage = (Stage) titleLabel.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/com/discoread/" + file));
+        Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(Main.class.getResource("/com/discoread/styles.css").toExternalForm());
+        stage.setScene(scene);
+        stage.show();
     }
 }

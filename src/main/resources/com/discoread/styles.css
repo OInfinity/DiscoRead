@@ -1,0 +1,13 @@
+.header-bar {
+    -fx-background-color: #4A90E2;
+}
+
+.text-field, .password-field, .search-bar {
+    -fx-padding: 8;
+    -fx-background-radius: 6;
+}
+
+.button-danger {
+    -fx-background-color: #D9534F;
+    -fx-text-fill: white;
+}

@@ -1,13 +1,17 @@
 package com.discoread.controller;
 
-import com.discoread.api.GoogleBooksService;
+import com.discoread.Main;
 import com.discoread.dao.BookDAO;
 import com.discoread.model.Book;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 
 public class AddBookController {
@@ -17,110 +21,137 @@ public class AddBookController {
     @FXML private TextField yearField;
     @FXML private TextField genreField;
     @FXML private TextField isbnField;
-    @FXML private CheckBox availableCheck;
-    @FXML private TextArea descriptionField;
-    @FXML private TextField coverUrlField;
     @FXML private TextField locationField;
-    @FXML private Button lookupButton;
-    @FXML private TextField filePathField;
-    @FXML private Button browseFileButton;
+    @FXML private TextArea descriptionField;
+    @FXML private TextField coverURLField;
+    @FXML private TextField googleLinkField;   // Google Books URL
+    @FXML private TextField pdfField;          // ⭐ NEW PDF Storage Field
+    @FXML private Label statusLabel;
 
     private final BookDAO bookDAO = new BookDAO();
-    private final GoogleBooksService googleService = new GoogleBooksService();
 
+
+
+    // =====================================================
+    // ⭐ SELECT PDF FROM DEVICE
+    // =====================================================
     @FXML
-    public void initialize() {
-        lookupButton.setOnAction(event -> lookupISBN());
-        browseFileButton.setOnAction(event -> chooseBookFile());
-    }
+    private void onChoosePDF() {
 
-    private void chooseBookFile() {
         FileChooser chooser = new FileChooser();
-        chooser.setTitle("Select Book File");
+        chooser.setTitle("Select PDF File");
         chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter(
-                        "Book Files (*.pdf, *.epub, *.txt)", "*.pdf", "*.epub", "*.txt")
+                new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf")
         );
 
         File file = chooser.showOpenDialog(null);
+
         if (file != null) {
-            filePathField.setText(file.getAbsolutePath());
-            availableCheck.setSelected(true); // auto available
+            String pdfPath = file.toURI().toString();   // Convert local file to URI
+            pdfField.setText(pdfPath);                 // Show to user
+            statusLabel.setText("📄 PDF Added!");
+            statusLabel.setStyle("-fx-text-fill: green;");
         }
     }
 
-    private void lookupISBN() {
-        String isbn = isbnField.getText().trim();
 
-        if (isbn.isEmpty()) {
-            showAlert("Missing ISBN", "Please enter an ISBN before searching.");
-            return;
-        }
 
-        Book found = googleService.searchByISBN(isbn);
+    // =====================================================
+    // 🔍 GOOGLE SEARCH IMPORT (unchanged)
+    // =====================================================
+    @FXML
+    private void openGoogleSearch() throws Exception {
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/com/discoread/google-search-view.fxml"));
+        Stage popup = new Stage();
+        popup.setScene(new Scene(loader.load()));
+        popup.setTitle("Search Google Books Online");
+        popup.showAndWait();
 
-        if (found == null) {
-            showAlert("Not Found", "No book found for ISBN: " + isbn);
-            return;
-        }
+        if (GoogleSearchController.selectedImportedBook != null) {
+            Book b = GoogleSearchController.selectedImportedBook;
 
-        titleField.setText(found.getTitle());
-        authorField.setText(found.getAuthor());
-        yearField.setText(found.getYear() == 0 ? "" : String.valueOf(found.getYear()));
-        genreField.setText(found.getGenre());
-        descriptionField.setText(found.getDescription());
-        coverUrlField.setText(found.getCoverImageURL());
-        availableCheck.setSelected(true);
-
-        if (locationField.getText().isBlank()) {
-            locationField.setText("Online");
+            titleField.setText(b.getTitle());
+            authorField.setText(b.getAuthor());
+            yearField.setText(String.valueOf(b.getYear()));
+            genreField.setText(b.getGenre());
+            descriptionField.setText(b.getDescription());
+            coverURLField.setText(b.getCoverImageURL());
+            googleLinkField.setText(b.getGoogleBooksLink());
         }
     }
 
-    public Book saveBook() {
+
+
+    // =====================================================
+    // SAVE NEW BOOK
+    // =====================================================
+    @FXML
+    private void onSaveBook() throws IOException {
+
         if (titleField.getText().isBlank() || authorField.getText().isBlank()) {
-            showAlert("Missing Data", "Title and Author are required.");
-            return null;
+            statusLabel.setText("⚠ Title & Author are required.");
+            return;
         }
 
-        int year = 0;
-        try {
-            year = Integer.parseInt(yearField.getText());
-        } catch (NumberFormatException ignored) {}
+        int year;
+        try { year = Integer.parseInt(yearField.getText()); }
+        catch (NumberFormatException e) {
+            statusLabel.setText("⚠ Year must be a number.");
+            return;
+        }
 
+        // ⭐ UPDATED CONSTRUCTOR — now including PDF Path
         Book book = new Book(
                 titleField.getText(),
                 authorField.getText(),
                 year,
                 genreField.getText(),
                 isbnField.getText(),
-                availableCheck.isSelected(),
+                true,
                 descriptionField.getText(),
-                coverUrlField.getText(),
+                coverURLField.getText(),
                 LocalDate.now(),
-                locationField.getText()
+                locationField.getText(),
+                googleLinkField.getText(),
+                pdfField.getText()          // ⭐ NEW
         );
 
-        // ✅ validate file path if provided
-        String path = filePathField.getText();
-        if (path != null && !path.isBlank()) {
-            File f = new File(path);
-            if (!f.exists()) {
-                showAlert("Invalid File", "Selected file does not exist.");
-                return null;
-            }
-            book.setFilePath(path);
+        if (!bookDAO.addBook(book)) {
+            statusLabel.setText("❌ Could not save. ISBN may already exist.");
+            return;
         }
 
-        bookDAO.addBook(book);
-        return book;
+        statusLabel.setStyle("-fx-text-fill: green;");
+        statusLabel.setText("✔ Book added! Returning...");
+
+        new Thread(() -> {
+            try { Thread.sleep(900); } catch (Exception ignored) {}
+            javafx.application.Platform.runLater(() -> {
+                try { loadScene("main-view.fxml"); }
+                catch (IOException e) { throw new RuntimeException(e); }
+            });
+        }).start();
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+
+
+    // =====================================================
+    // CANCEL
+    // =====================================================
+    @FXML
+    private void onCancel() throws IOException { loadScene("main-view.fxml"); }
+
+
+
+    private void loadScene(String fxml) throws IOException {
+        Stage stage = (Stage) titleField.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/com/discoread/" + fxml));
+        Scene scene = new Scene(loader.load());
+
+        var css = Main.class.getResource("/com/discoread/styles.css");
+        if (css != null) scene.getStylesheets().add(css.toExternalForm());
+
+        stage.setScene(scene);
+        stage.show();
     }
 }
